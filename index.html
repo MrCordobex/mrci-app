@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MRCI / A-MRCI Studio</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Farmacoterapia compleja, trazabilidad clara</p>
+        <h1>MRCI / A-MRCI Studio</h1>
+        <p class="hero-text">
+          App web estatica para evaluar complejidad farmacoterapeutica con
+          MRCI correcto y una plantilla A-MRCI basada en Scrivens 2024.
+        </p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-card">
+          <span class="meta-label">Metodo</span>
+          <strong>George 2004 + plantilla Scrivens 2024</strong>
+        </div>
+        <div class="meta-card">
+          <span class="meta-label">Parser</span>
+          <strong>Local auditable + Gemini opcional</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="scoreboard">
+      <article class="score-card">
+        <span class="score-label">MRCI total</span>
+        <strong id="metric-mrci-total" class="score-value">0</strong>
+        <p id="metric-mrci-sections" class="score-detail">A 0 | B 0 | C 0</p>
+      </article>
+      <article class="score-card accent">
+        <span class="score-label">A-MRCI referencia</span>
+        <strong id="metric-amrci-total" class="score-value">0</strong>
+        <p id="metric-amrci-sections" class="score-detail">A 0 | B 0 | C 0</p>
+      </article>
+      <article class="score-card">
+        <span class="score-label">Delta A-MRCI - MRCI</span>
+        <strong id="metric-delta" class="score-value">0</strong>
+        <p id="metric-delta-relative" class="score-detail">0%</p>
+      </article>
+      <article class="score-card">
+        <span class="score-label">Medicamentos</span>
+        <strong id="metric-med-count" class="score-value">0</strong>
+        <p id="metric-parser" class="score-detail">Sin regimen</p>
+      </article>
+    </section>
+
+    <section class="banner-grid">
+      <div class="banner warning">
+        <strong>Importante</strong>
+        <p>
+          La Seccion A cuenta cada forma/ruta una sola vez por regimen. No se
+          suma una vez por medicamento.
+        </p>
+      </div>
+      <div class="banner info">
+        <strong>A-MRCI</strong>
+        <p>
+          La diferencia positiva descrita por Scrivens fue de cohorte. Esta app no
+          fuerza A-MRCI &gt; MRCI.
+        </p>
+      </div>
+    </section>
+
+    <div id="status-bar" class="status-bar" aria-live="polite"></div>
+
+    <nav class="tabbar" aria-label="Secciones">
+      <button class="tab is-active" data-tab="input">Entrada</button>
+      <button class="tab" data-tab="manual">Manual</button>
+      <button class="tab" data-tab="results">Resultados</button>
+      <button class="tab" data-tab="compare">Comparar</button>
+      <button class="tab" data-tab="config">Configuracion</button>
+    </nav>
+
+    <main class="panel-stack">
+      <section class="panel is-active" id="tab-input">
+        <div class="panel-header">
+          <h2>Entrada de listado</h2>
+          <p>Pega la lista de medicamentos o sube un PDF para parseo con Gemini.</p>
+        </div>
+
+        <div class="grid two-up">
+          <div class="card">
+            <label class="field-label" for="raw-input">Listado de medicamentos</label>
+            <textarea id="raw-input" class="text-input tall"
+              placeholder="metformina 850 mg 1-0-1&#10;insulina glargina 20 UI noche&#10;salbutamol inhalador 2 puff c/6h PRN&#10;apixaban 5 mg cada 12 h&#10;omeprazol 20 mg en ayunas"></textarea>
+            <div class="button-row">
+              <button id="parse-local-btn" class="btn primary">Parsear local</button>
+              <button id="parse-gemini-text-btn" class="btn secondary">Parsear con Gemini</button>
+              <button id="clear-text-btn" class="btn ghost">Limpiar texto</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <label class="field-label" for="pdf-input">PDF de medicacion</label>
+            <input id="pdf-input" type="file" accept="application/pdf" class="file-input" />
+            <p class="muted">
+              El parseo de PDF usa Gemini con inline document. Sin API key no se
+              intenta OCR local ni se inventa texto.
+            </p>
+            <div class="button-row">
+              <button id="parse-gemini-pdf-btn" class="btn secondary">Extraer PDF con Gemini</button>
+              <button data-action="new-case" class="btn danger">Nuevo caso</button>
+            </div>
+            <div class="audit-box">
+              <strong>Notas del parser</strong>
+              <div id="parse-notes"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="tab-manual">
+        <div class="panel-header">
+          <h2>Alta manual de medicamento</h2>
+          <p>
+            La forma/ruta se selecciona como categoria MRCI unica, no como forma y via
+            independientes.
+          </p>
+        </div>
+
+        <div class="grid two-up">
+          <div class="card form-card">
+            <label class="field-label" for="manual-name">Nombre</label>
+            <input id="manual-name" class="text-input" type="text" placeholder="Ej. furosemida" />
+
+            <label class="field-label" for="manual-form">Forma/ruta MRCI</label>
+            <select id="manual-form" class="text-input"></select>
+
+            <label class="field-label" for="manual-units">Unidades por toma</label>
+            <input id="manual-units" class="text-input" type="text" placeholder="1, 2 puff, 20 UI, 1-2" />
+
+            <label class="field-label" for="manual-frequency">Patron de frecuencia</label>
+            <div class="inline-form">
+              <select id="manual-frequency" class="text-input grow"></select>
+              <input id="manual-custom-hours" class="text-input compact" type="number" min="1" step="1"
+                placeholder="h" />
+              <input id="manual-custom-count" class="text-input compact" type="number" min="1" step="1"
+                placeholder="veces/d" />
+              <label class="inline-checkbox">
+                <input id="manual-frequency-prn" type="checkbox" />
+                PRN
+              </label>
+              <button id="add-frequency-btn" class="btn primary">Anadir</button>
+            </div>
+
+            <div class="chip-zone">
+              <span class="chip-zone-label">Patrones seleccionados</span>
+              <div id="manual-frequency-list" class="chip-list"></div>
+            </div>
+
+            <label class="field-label">Instrucciones adicionales</label>
+            <div id="manual-instruction-grid" class="checkbox-grid"></div>
+
+            <label class="field-label" for="manual-notes">Notas</label>
+            <textarea id="manual-notes" class="text-input" rows="4" placeholder="Observaciones opcionales"></textarea>
+
+            <div class="button-row">
+              <button id="manual-add-btn" class="btn primary">Anadir medicamento</button>
+              <button id="manual-reset-btn" class="btn ghost">Limpiar formulario</button>
+              <button data-action="new-case" class="btn danger">Nuevo caso</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Regimen actual</h3>
+            <div id="regimen-preview" class="preview-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="tab-results">
+        <div class="panel-header">
+          <h2>Resultados y trazabilidad</h2>
+          <p>Desglose por secciones, auditoria de parser y exportacion.</p>
+        </div>
+
+        <div class="grid two-up">
+          <div class="card">
+            <h3>Resumen clinico</h3>
+            <p id="clinical-summary" class="summary-text">Sin datos.</p>
+            <div class="button-row">
+              <button id="copy-summary-btn" class="btn secondary">Copiar resumen</button>
+              <button id="export-json-btn" class="btn ghost">Exportar JSON</button>
+              <button id="export-csv-btn" class="btn ghost">Exportar CSV</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Control de calidad</h3>
+            <div id="quality-control" class="bullet-box"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Detalle por medicamento</h3>
+          <div id="results-table"></div>
+        </div>
+
+        <div class="grid two-up">
+          <div class="card">
+            <h3>Auditoria</h3>
+            <div id="audit-log" class="bullet-box"></div>
+          </div>
+          <div class="card">
+            <h3>Forms unicas del regimen</h3>
+            <div id="forms-breakdown" class="bullet-box"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="tab-compare">
+        <div class="panel-header">
+          <h2>Comparacion de regimenes</h2>
+          <p>Guarda el regimen actual en A o B y compara la complejidad.</p>
+        </div>
+
+        <div class="button-row">
+          <button id="save-regimen-a-btn" class="btn primary">Guardar como regimen A</button>
+          <button id="save-regimen-b-btn" class="btn secondary">Guardar como regimen B</button>
+          <button id="compare-btn" class="btn ghost">Comparar ahora</button>
+        </div>
+
+        <div id="compare-output" class="card compare-box"></div>
+      </section>
+
+      <section class="panel" id="tab-config">
+        <div class="panel-header">
+          <h2>Configuracion</h2>
+          <p>Tablas editables, parser y Gemini. Toda modificacion queda guardada en local.</p>
+        </div>
+
+        <div class="grid two-up">
+          <div class="card">
+            <h3>Gemini</h3>
+            <label class="field-label" for="gemini-api-key">API key</label>
+            <input id="gemini-api-key" class="text-input" type="password" placeholder="AIza..." />
+            <label class="field-label" for="gemini-model">Modelo</label>
+            <input id="gemini-model" class="text-input" type="text" value="gemini-3.1-flash-lite-preview" />
+            <div class="checkbox-grid compact-grid">
+              <label><input id="gemini-enable-text" type="checkbox" /> Usar Gemini para texto</label>
+              <label><input id="gemini-enable-pdf" type="checkbox" checked /> Usar Gemini para PDF</label>
+            </div>
+            <p class="muted">
+              La clave se guarda en localStorage del navegador. No se envia a ningun backend propio.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Reglas metodologicas</h3>
+            <ul class="plain-list">
+              <li>La Seccion A cuenta una sola vez cada forma/ruta unica.</li>
+              <li>La Seccion C permite multiples instrucciones por medicamento.</li>
+              <li>A-MRCI es una plantilla de referencia, no una verdad universal.</li>
+              <li>Las frecuencias no oficiales generan aviso y, en A-MRCI, pueden interpolarse.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>MRCI - Formas</h3>
+          <textarea id="config-forms" class="text-input code-area"></textarea>
+        </div>
+        <div class="card">
+          <h3>MRCI - Frecuencias</h3>
+          <textarea id="config-frequencies" class="text-input code-area"></textarea>
+        </div>
+        <div class="card">
+          <h3>MRCI - Instrucciones</h3>
+          <textarea id="config-instructions" class="text-input code-area"></textarea>
+        </div>
+        <div class="card">
+          <h3>A-MRCI - Plantilla de referencia</h3>
+          <textarea id="config-amrci" class="text-input code-area"></textarea>
+        </div>
+
+        <div class="button-row">
+          <button id="save-config-btn" class="btn primary">Guardar configuracion</button>
+          <button id="export-config-btn" class="btn secondary">Exportar configuracion</button>
+          <button id="trigger-import-config-btn" class="btn ghost">Importar configuracion</button>
+          <button id="restore-config-btn" class="btn danger">Restaurar por defecto</button>
+        </div>
+        <input id="import-config-input" type="file" accept="application/json" hidden />
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+
+</html>

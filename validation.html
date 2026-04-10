@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validacion MRCI / A-MRCI</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Test de regresion</p>
+          <h1>Suite de validacion</h1>
+          <p class="hero-text">
+            Ejecuta automaticamente los casos exactos y la regresion de literatura
+            para comprobar si el motor y el parser se comportan como esperamos.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-card">
+            <span class="meta-label">Modo</span>
+            <strong>Validacion local automatica</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Config</span>
+            <strong id="config-source-label">Cargando...</strong>
+          </div>
+        </div>
+      </header>
+
+      <div class="button-row" style="margin-top:16px">
+        <button id="run-validation-btn" class="btn primary">Ejecutar validacion</button>
+        <a href="./index.html" class="btn ghost" style="text-decoration:none">Volver a la app</a>
+      </div>
+
+      <div id="validation-status" class="status-bar" aria-live="polite"></div>
+
+      <section class="scoreboard">
+        <article class="score-card">
+          <span class="score-label">Casos exactos OK</span>
+          <strong id="exact-pass-count" class="score-value">0</strong>
+          <p id="exact-pass-detail" class="score-detail">0 / 0</p>
+        </article>
+        <article class="score-card accent">
+          <span class="score-label">Casos exactos FAIL</span>
+          <strong id="exact-fail-count" class="score-value">0</strong>
+          <p class="score-detail">Esperado numerico vs real</p>
+        </article>
+        <article class="score-card">
+          <span class="score-label">Regresion ranking</span>
+          <strong id="ranking-status" class="score-value">-</strong>
+          <p id="ranking-detail" class="score-detail">Sin ejecutar</p>
+        </article>
+        <article class="score-card">
+          <span class="score-label">Parser literatura</span>
+          <strong id="parser-warning-count" class="score-value">0</strong>
+          <p class="score-detail">Avisos en regimenes A-F</p>
+        </article>
+      </section>
+
+      <div class="grid two-up" style="margin-top:16px">
+        <div class="card">
+          <h2>Resumen</h2>
+          <div id="validation-summary" class="bullet-box"></div>
+        </div>
+        <div class="card">
+          <h2>Ranking de literatura</h2>
+          <div id="ranking-box" class="bullet-box"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Detalle de casos exactos</h2>
+        <div id="exact-cases-table"></div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/validation-runner.js"></script>
+  </body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validacion MRCI / A-MRCI</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Test de regresion</p>
+          <h1>Suite de validacion</h1>
+          <p class="hero-text">
+            Ejecuta automaticamente los casos exactos y la regresion de literatura
+            para comprobar si el motor y el parser se comportan como esperamos.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-card">
+            <span class="meta-label">Modo</span>
+            <strong>Validacion local automatica</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Config</span>
+            <strong id="config-source-label">Por defecto</strong>
+          </div>
+        </div>
+      </header>
+
+      <div class="button-row" style="margin-top:16px">
+        <button id="run-validation-btn" class="btn primary">Ejecutar validacion</button>
+        <a href="./index.html" class="btn ghost" style="text-decoration:none">Volver a la app</a>
+      </div>
+
+      <div id="validation-status" class="status-bar warning" aria-live="polite">Validacion completada: hay discrepancias que revisar.</div>
+
+      <section class="scoreboard">
+        <article class="score-card">
+          <span class="score-label">Casos exactos OK</span>
+          <strong id="exact-pass-count" class="score-value">12</strong>
+          <p id="exact-pass-detail" class="score-detail">12 / 12</p>
+        </article>
+        <article class="score-card accent">
+          <span class="score-label">Casos exactos FAIL</span>
+          <strong id="exact-fail-count" class="score-value">0</strong>
+          <p class="score-detail">Esperado numerico vs real</p>
+        </article>
+        <article class="score-card">
+          <span class="score-label">Regresion ranking</span>
+          <strong id="ranking-status" class="score-value">FAIL</strong>
+          <p id="ranking-detail" class="score-detail">A &lt; B &lt; C &lt; E &lt; D &lt; F</p>
+        </article>
+        <article class="score-card">
+          <span class="score-label">Parser literatura</span>
+          <strong id="parser-warning-count" class="score-value">40</strong>
+          <p class="score-detail">Avisos en regimenes A-F</p>
+        </article>
+      </section>
+
+      <div class="grid two-up" style="margin-top:16px">
+        <div class="card">
+          <h2>Resumen</h2>
+          <div id="validation-summary" class="bullet-box"><div class="bullet-item">Casos exactos superados: 12 de 12</div><div class="bullet-item">Casos exactos fallidos: 0</div><div class="bullet-item">Ranking esperado: A &lt; B &lt; C &lt; D &lt; E &lt; F</div><div class="bullet-item">Ranking real: A &lt; B &lt; C &lt; E &lt; D &lt; F</div></div>
+        </div>
+        <div class="card">
+          <h2>Ranking de literatura</h2>
+          <div id="ranking-box" class="bullet-box">
+        <div class="bullet-item">
+          <strong>Regimen A</strong><br>
+          MRCI 6 | A-MRCI 6 | Medicamentos parseados 1
+        </div>
+      
+        <div class="bullet-item">
+          <strong>Regimen B</strong><br>
+          MRCI 9,5 | A-MRCI 9,5 | Medicamentos parseados 4
+        </div>
+      
+        <div class="bullet-item">
+          <strong>Regimen C</strong><br>
+          MRCI 20 | A-MRCI 14 | Medicamentos parseados 6
+        </div>
+      
+        <div class="bullet-item">
+          <strong>Regimen D</strong><br>
+          MRCI 25,5 | A-MRCI 25,5 | Medicamentos parseados 10
+        </div>
+      
+        <div class="bullet-item">
+          <strong>Regimen E</strong><br>
+          MRCI 20,5 | A-MRCI 20,5 | Medicamentos parseados 10
+        </div>
+      
+        <div class="bullet-item">
+          <strong>Regimen F</strong><br>
+          MRCI 45,5 | A-MRCI 45,5 | Medicamentos parseados 24
+        </div>
+      </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Detalle de casos exactos</h2>
+        <div id="exact-cases-table">
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Caso</th>
+          <th>Estado</th>
+          <th>MRCI real</th>
+          <th>MRCI esperado</th>
+          <th>A-MRCI real</th>
+          <th>A-MRCI esperado</th>
+          <th>Notas</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr>
+      <td><strong>C01</strong><br>Monoterapia oral simple</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C02</strong><br>Dos orales con misma forma</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C03</strong><br>Rescate inhalado PRN</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>5,5</td>
+      <td>5,5</td>
+      <td>5,5</td>
+      <td>5,5</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C04</strong><br>Anticoagulante q12h mas gastroproteccion</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>5,5</td>
+      <td>5,5</td>
+      <td>5,5</td>
+      <td>5,5</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C05</strong><br>Parche semanal</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>4</td>
+      <td>4</td>
+      <td>4</td>
+      <td>4</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C06</strong><br>Alendronato semanal con liquido especifico</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>4</td>
+      <td>4</td>
+      <td>4</td>
+      <td>4</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C07</strong><br>Insulina basal nocturna</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C08</strong><br>Triple inhalada tipo EPOC</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>12,5</td>
+      <td>12,5</td>
+      <td>12,5</td>
+      <td>12,5</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C09</strong><br>Accuhaler excluido en plantilla A-MRCI</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>5</td>
+      <td>5</td>
+      <td>2</td>
+      <td>2</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C10</strong><br>Oxigenoterapia excluida en plantilla A-MRCI</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>6</td>
+      <td>6</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C11</strong><br>Patron regular mas rescate en el mismo farmaco</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>7,5</td>
+      <td>7,5</td>
+      <td>7,5</td>
+      <td>7,5</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+    <tr>
+      <td><strong>C12</strong><br>Frecuencia no oficial q5h</td>
+      <td><span class="pill success">PASS</span></td>
+      <td>4</td>
+      <td>4</td>
+      <td>9,5</td>
+      <td>9,5</td>
+      <td>Sin incidencias</td>
+    </tr>
+  
+      </tbody>
+    </table>
+  </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/validation-runner.js"></script>
+  
+
+</body></html>

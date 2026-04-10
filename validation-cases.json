@@ -1,0 +1,355 @@
+{
+  "exactCases": [
+    {
+      "id": "C01",
+      "title": "Monoterapia oral simple",
+      "purpose": "Caso base minimo.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "atorvastatina",
+            "dosageFormKey": "tablets_capsules",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 comprimido"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 1, "sectionB": 1, "sectionC": 0, "total": 2 },
+        "amrci": { "sectionA": 1, "sectionB": 1, "sectionC": 0, "total": 2 }
+      }
+    },
+    {
+      "id": "C02",
+      "title": "Dos orales con misma forma",
+      "purpose": "Comprobar que la Seccion A cuenta la forma oral solo una vez.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "metformina",
+            "dosageFormKey": "tablets_capsules",
+            "frequencyEntries": [{ "code": "twice_daily", "label": "Dos veces al dia" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 comprimido"
+          },
+          {
+            "name": "omeprazol",
+            "dosageFormKey": "tablets_capsules",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": ["relation_to_food"],
+            "unitsPerDose": "1 capsula"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 1, "sectionB": 3, "sectionC": 1, "total": 5 },
+        "amrci": { "sectionA": 1, "sectionB": 3, "sectionC": 1, "total": 5 }
+      }
+    },
+    {
+      "id": "C03",
+      "title": "Rescate inhalado PRN",
+      "purpose": "Comprobar PRN generico y multiples unidades en una toma.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "salbutamol",
+            "dosageFormKey": "metered_dose_inhalers",
+            "frequencyEntries": [{ "code": "as_needed_if_necessary", "label": "Segun necesidad/PRN" }],
+            "additionalDirectionKeys": ["multiple_units_at_one_time"],
+            "unitsPerDose": "2 puff"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 4, "sectionB": 0.5, "sectionC": 1, "total": 5.5 },
+        "amrci": { "sectionA": 4, "sectionB": 0.5, "sectionC": 1, "total": 5.5 }
+      }
+    },
+    {
+      "id": "C04",
+      "title": "Anticoagulante q12h mas gastroproteccion",
+      "purpose": "Comprobar diferencia entre BID y q12h mas relacion con comida.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "apixaban",
+            "dosageFormKey": "tablets_capsules",
+            "frequencyEntries": [{ "code": "every_12_hours", "label": "Cada 12 horas" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 comprimido"
+          },
+          {
+            "name": "omeprazol",
+            "dosageFormKey": "tablets_capsules",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": ["relation_to_food"],
+            "unitsPerDose": "1 capsula"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 1, "sectionB": 3.5, "sectionC": 1, "total": 5.5 },
+        "amrci": { "sectionA": 1, "sectionB": 3.5, "sectionC": 1, "total": 5.5 }
+      }
+    },
+    {
+      "id": "C05",
+      "title": "Parche semanal",
+      "purpose": "Comprobar frecuencia semanal agrupada en dias alternos o menos frecuente.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "estradiol transdermico",
+            "dosageFormKey": "patches",
+            "frequencyEntries": [{ "code": "alternate_or_less", "label": "Dias alternos o menos frecuente" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 parche"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 2, "sectionB": 2, "sectionC": 0, "total": 4 },
+        "amrci": { "sectionA": 2, "sectionB": 2, "sectionC": 0, "total": 4 }
+      }
+    },
+    {
+      "id": "C06",
+      "title": "Alendronato semanal con liquido especifico",
+      "purpose": "Comprobar instruccion de liquido especifico.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "alendronato",
+            "dosageFormKey": "tablets_capsules",
+            "frequencyEntries": [{ "code": "alternate_or_less", "label": "Dias alternos o menos frecuente" }],
+            "additionalDirectionKeys": ["specific_fluid"],
+            "unitsPerDose": "1 comprimido"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 1, "sectionB": 2, "sectionC": 1, "total": 4 },
+        "amrci": { "sectionA": 1, "sectionB": 2, "sectionC": 1, "total": 4 }
+      }
+    },
+    {
+      "id": "C07",
+      "title": "Insulina basal nocturna",
+      "purpose": "Comprobar que 20 UI no se interpreta como multiples unidades posologicas.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "insulina glargina",
+            "dosageFormKey": "injections_prefilled",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": ["specified_times"],
+            "unitsPerDose": "20 UI"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 3, "sectionB": 1, "sectionC": 1, "total": 5 },
+        "amrci": { "sectionA": 3, "sectionB": 1, "sectionC": 1, "total": 5 }
+      }
+    },
+    {
+      "id": "C08",
+      "title": "Triple inhalada tipo EPOC",
+      "purpose": "Comprobar suma de frecuencias y multiples unidades; la forma MDI solo cuenta una vez.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "salbutamol",
+            "dosageFormKey": "metered_dose_inhalers",
+            "frequencyEntries": [{ "code": "as_needed_if_necessary", "label": "Segun necesidad/PRN" }],
+            "additionalDirectionKeys": ["multiple_units_at_one_time"],
+            "unitsPerDose": "2 puff"
+          },
+          {
+            "name": "fluticasona",
+            "dosageFormKey": "metered_dose_inhalers",
+            "frequencyEntries": [{ "code": "twice_daily", "label": "Dos veces al dia" }],
+            "additionalDirectionKeys": ["multiple_units_at_one_time"],
+            "unitsPerDose": "2 puff"
+          },
+          {
+            "name": "ipratropio",
+            "dosageFormKey": "metered_dose_inhalers",
+            "frequencyEntries": [{ "code": "three_times_daily", "label": "Tres veces al dia" }],
+            "additionalDirectionKeys": ["multiple_units_at_one_time"],
+            "unitsPerDose": "2 puff"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 4, "sectionB": 5.5, "sectionC": 3, "total": 12.5 },
+        "amrci": { "sectionA": 4, "sectionB": 5.5, "sectionC": 3, "total": 12.5 }
+      }
+    },
+    {
+      "id": "C09",
+      "title": "Accuhaler excluido en plantilla A-MRCI",
+      "purpose": "Comprobar diferencia real entre MRCI y A-MRCI de referencia por exclusiones de Scrivens.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "fluticasona/salmeterol",
+            "dosageFormKey": "accuhalers",
+            "frequencyEntries": [{ "code": "twice_daily", "label": "Dos veces al dia" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 puff"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 3, "sectionB": 2, "sectionC": 0, "total": 5 },
+        "amrci": { "sectionA": 0, "sectionB": 2, "sectionC": 0, "total": 2 }
+      }
+    },
+    {
+      "id": "C10",
+      "title": "Oxigenoterapia excluida en plantilla A-MRCI",
+      "purpose": "Comprobar exclusion simultanea de forma y frecuencia de oxigeno en la plantilla.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "oxigenoterapia domiciliaria",
+            "dosageFormKey": "oxygen_concentrator",
+            "frequencyEntries": [{ "code": "oxygen_gt_15h", "label": "Oxigeno > 15 horas/dia" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": ""
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 3, "sectionB": 3, "sectionC": 0, "total": 6 },
+        "amrci": { "sectionA": 0, "sectionB": 0, "sectionC": 0, "total": 0 }
+      }
+    },
+    {
+      "id": "C11",
+      "title": "Patron regular mas rescate en el mismo farmaco",
+      "purpose": "Comprobar que BID y PRN se puntuan ambos si coexisten.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "salbutamol",
+            "dosageFormKey": "metered_dose_inhalers",
+            "frequencyEntries": [
+              { "code": "twice_daily", "label": "Dos veces al dia" },
+              { "code": "as_needed_if_necessary", "label": "Segun necesidad/PRN" }
+            ],
+            "additionalDirectionKeys": ["multiple_units_at_one_time"],
+            "unitsPerDose": "2 puff"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 4, "sectionB": 2.5, "sectionC": 1, "total": 7.5 },
+        "amrci": { "sectionA": 4, "sectionB": 2.5, "sectionC": 1, "total": 7.5 }
+      }
+    },
+    {
+      "id": "C12",
+      "title": "Frecuencia no oficial q5h",
+      "purpose": "Comprobar aviso en MRCI y la interpolacion de plantilla en A-MRCI.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "ipratropio",
+            "dosageFormKey": "metered_dose_inhalers",
+            "frequencyEntries": [{ "code": "custom_interval", "label": "Cada 5 horas", "intervalHours": 5, "prn": false }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 puff"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 4, "sectionB": 0, "sectionC": 0, "total": 4 },
+        "amrci": { "sectionA": 4, "sectionB": 5.5, "sectionC": 0, "total": 9.5 }
+      },
+      "notes": [
+        "En MRCI debe aparecer advertencia por frecuencia no oficial.",
+        "En la plantilla A-MRCI se espera interpolacion entre q6h (4.5) y q4h (6.5)."
+      ]
+    }
+  ],
+  "literatureRegression": [
+    {
+      "source": "George et al. 2004 Appendix I",
+      "expectedRanking": ["A", "B", "C", "D", "E", "F"],
+      "note": "La clasificacion del panel experto y del MRCI coincidieron exactamente en este orden creciente de complejidad.",
+      "regimens": {
+        "A": [
+          "albuterol MDI 100 ug 2 puffs each morning"
+        ],
+        "B": [
+          "albuterol MDI 100 ug 2 puffs as needed",
+          "flunitrazepam 1 mg 1/2 tablet each night",
+          "fluticasone MDI 125 ug 2 puffs twice daily",
+          "ipratropium MDI 42 ug 2 puffs 3 times daily"
+        ],
+        "C": [
+          "aspirin 100 mg 1 tablet daily",
+          "budesonide Turbuhaler 400 ug 2 puffs at midday",
+          "eformoterol Aerolizer 12 ug 2 puffs twice daily",
+          "ipratropium MDI 42 ug 2 puffs twice daily",
+          "simvastatin 20 mg 1 tablet each night",
+          "zolpidem 10 mg 1 tablet at night as needed"
+        ],
+        "D": [
+          "albuterol MDI 100 ug 1 puff as needed",
+          "albuterol nebules 2.5 mg/2.5 mL 1 each morning and afternoon",
+          "alendronate sodium 5 mg 1 tablet weekly",
+          "fluticasone MDI 125 ug 1 puff twice daily",
+          "furosemide 40 mg 1 tablet twice daily",
+          "ibuprofen 400 mg 1 tablet twice daily",
+          "ipratropium nebules 250 ug/mL 1 each morning and afternoon",
+          "perindopril 4 mg 1 tablet each morning",
+          "potassium chloride 600 mg SR 1 tablet twice daily",
+          "theophylline 300 mg SR 1 tablet twice daily"
+        ],
+        "E": [
+          "albuterol MDI 100 ug 1-2 puffs every 4-6 hours",
+          "albuterol nebules 2.5 mg/2.5 mL 1 twice daily",
+          "doxycycline 50 mg 1 tablet daily after food",
+          "fluticasone plus salmeterol Accuhaler 500/50 ug 1 puff twice daily",
+          "ipratropium MDI 42 ug 1-2 puffs every 4-6 hours",
+          "ipratropium nebules 500 ug/mL 1 twice daily",
+          "medroxyprogesterone 10 mg tablets, use as directed",
+          "estradiol 50 ug 1 patch each week",
+          "pantoprazole 40 mg 1 tablet daily",
+          "piroxicam 10 mg 1 capsule as needed"
+        ],
+        "F": [
+          "acetaminophen 500 mg 2 tablets 4 times daily",
+          "albuterol MDI 100 ug 2 puffs as needed",
+          "albuterol nebules 2.5 mg/2.5 mL 1 puff 4 times daily",
+          "alendronate sodium 70 mg 1 tablet weekly",
+          "amitriptyline 50 mg 1 tablet each night",
+          "atorvastatin 10 mg 1 tablet each night",
+          "colchicine 0.5 mg 1 tablet daily",
+          "digoxin 250 ug 1 tablet daily",
+          "doxycycline 100 mg 1 tablet each morning",
+          "ergocalciferol 25 ug 1 capsule daily",
+          "ferrous sulfate plus folic acid 1 tablet daily",
+          "fluticasone MDI 250 ug 2 puffs twice daily plus salmeterol MDI 25 ug 2 puffs twice daily",
+          "furosemide 40 mg 2 tablets twice daily",
+          "gliclazide 80 mg 3 tablets each morning",
+          "human insulin injection 3 mL, use as directed",
+          "ipratropium MDI 42 ug 1 puff 4 times daily",
+          "ipratropium nebules 250 ug/mL 1 puff 4 times daily",
+          "levodopa plus benserazide 100/25 mg 1 tablet each morning and 2 tablets at midday",
+          "metformin 500 mg 2 tablets twice daily",
+          "pantoprazole 40 mg 1 tablet daily",
+          "prednisolone 5 mg 1 tablet twice daily",
+          "sertraline 50 mg 1 tablet each morning",
+          "spironolactone 25 mg 1 tablet at lunch",
+          "warfarin tablets, use as directed"
+        ]
+      }
+    }
+  ]
+}
