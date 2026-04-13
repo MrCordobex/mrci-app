@@ -72,9 +72,10 @@ Archivo estructurado: [validation-cases.json](/C:/Users/pedro/Desktop/TFG-ANA/mr
 - `insulina glargina 20 UI noche`
 - Esperado:
 - `MRCI = 5`
-- `A-MRCI = 5`
+- `A-MRCI = 4`
 - Punto clave:
 - `20 UI` no debe convertir automaticamente el caso en `multiple_units_at_one_time`.
+- En la plantilla A-MRCI, `noche/bedtime` se absorbe dentro del mapeo de frecuencia y no suma una `Seccion C` aparte.
 
 ### C08 Triple inhalada tipo EPOC
 
@@ -125,6 +126,18 @@ Archivo estructurado: [validation-cases.json](/C:/Users/pedro/Desktop/TFG-ANA/mr
 - `A-MRCI = 9.5`
 - Punto clave:
 - La plantilla A-MRCI interpola entre `q6h = 4.5` y `q4h = 6.5`, dando `5.5`.
+
+### C13 Dos comprimidos diarios con uno nocturno
+
+- Regimen:
+- `dovato 1 comprimido una vez al dia`
+- `atorvastatina 1 comprimido una vez al dia por la noche`
+- Esperado:
+- `MRCI = 4`
+- `A-MRCI = 3`
+- Punto clave:
+- En ambos indices, la `Seccion A` del regimen cuenta la forma oral una sola vez.
+- En la plantilla A-MRCI, `por la noche/at bedtime` no suma una `Seccion C` separada.
 
 ## Regresion de literatura
 

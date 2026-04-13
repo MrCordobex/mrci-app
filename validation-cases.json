@@ -137,7 +137,7 @@
     {
       "id": "C07",
       "title": "Insulina basal nocturna",
-      "purpose": "Comprobar que 20 UI no se interpreta como multiples unidades posologicas.",
+      "purpose": "Comprobar que 20 UI no se interpreta como multiples unidades posologicas y que A-MRCI absorbe bedtime/noche dentro de la frecuencia.",
       "regimen": {
         "medications": [
           {
@@ -151,7 +151,7 @@
       },
       "expected": {
         "mrci": { "sectionA": 3, "sectionB": 1, "sectionC": 1, "total": 5 },
-        "amrci": { "sectionA": 3, "sectionB": 1, "sectionC": 1, "total": 5 }
+        "amrci": { "sectionA": 3, "sectionB": 1, "sectionC": 0, "total": 4 }
       }
     },
     {
@@ -274,6 +274,33 @@
         "En MRCI debe aparecer advertencia por frecuencia no oficial.",
         "En la plantilla A-MRCI se espera interpolacion entre q6h (4.5) y q4h (6.5)."
       ]
+    },
+    {
+      "id": "C13",
+      "title": "Dos comprimidos diarios con uno nocturno",
+      "purpose": "Comprobar que la Seccion A del regimen no se duplica y que A-MRCI no suma una Seccion C separada por bedtime/noche.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "dovato",
+            "dosageFormKey": "tablets_capsules",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 comprimido"
+          },
+          {
+            "name": "atorvastatina",
+            "dosageFormKey": "tablets_capsules",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": ["specified_times"],
+            "unitsPerDose": "1 comprimido"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 1, "sectionB": 2, "sectionC": 1, "total": 4 },
+        "amrci": { "sectionA": 1, "sectionB": 2, "sectionC": 0, "total": 3 }
+      }
     }
   ],
   "literatureRegression": [

@@ -10,7 +10,6 @@ export const MRCI_TABLES = {
   forms: {
     tablets_capsules: { weight: 1, label: "Comprimido/Capsula", routeGroup: "oral" },
     gargles_mouthwashes: { weight: 2, label: "Gargaras/Colutorio", routeGroup: "oral" },
-    gums_lozenges: { weight: 2, label: "Chicle/Pastilla", routeGroup: "oral" },
     liquids: { weight: 2, label: "Liquido oral", routeGroup: "oral" },
     powders_granules: { weight: 2, label: "Polvo/Granulado oral", routeGroup: "oral" },
     sublingual_sprays_tabs: { weight: 2, label: "Sublingual", routeGroup: "oral" },
@@ -87,6 +86,7 @@ export const AMRCI_REFERENCE = {
     note:
       "Plantilla de referencia basada en Scrivens et al. 2024. Reutiliza las ponderaciones de George con exclusiones y reglas locales para automatizacion. Requiere validacion institucional.",
   },
+  absorbedInstructionKeys: ["specified_times"],
   excludedFormKeys: [
     "dressings",
     "nasal_drops_cream_ointment",
@@ -109,6 +109,7 @@ export const AMRCI_REFERENCE = {
   notes: [
     "En el paper, A-MRCI no implica siempre un valor mayor que MRCI para cualquier regimen individual.",
     "La diferencia positiva observada por Scrivens fue un resultado de cohorte, no una ley de scoring.",
+    "En la plantilla por defecto, las horas especificas como 'nightly/at bedtime' se absorben dentro del mapeo de frecuencia A-MRCI y no suman una Seccion C aparte.",
     "Las prescripciones con frecuencias no oficiales o items locales deben revisarse y validarse antes de uso investigador.",
   ],
 };

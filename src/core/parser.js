@@ -29,7 +29,7 @@ const FORM_PATTERNS = [
   { key: "liquids", patterns: [/jarabe/i, /suspension/i, /solucion oral/i, /\bml\b/i, /gotas orales/i] },
   { key: "powders_granules", patterns: [/sobres/i, /granulado/i, /polvo/i] },
   { key: "gargles_mouthwashes", patterns: [/colutorio/i, /enjuague/i, /gargar/i] },
-  { key: "gums_lozenges", patterns: [/pastilla/i, /lozenge/i, /chicle/i, /bucal/i] },
+  { key: "tablets_capsules", patterns: [/pastilla/i] },
   { key: "sublingual_sprays_tabs", patterns: [/sublingual/i] },
   { key: "suppositories", patterns: [/supositorio/i] },
   { key: "enemas", patterns: [/enema/i, /microenema/i] },

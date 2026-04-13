@@ -201,9 +201,25 @@ function resolveFrequency(entry, mode, tables, referenceConfig) {
   };
 }
 
-function scoreDirections(medication, modeScore, tables) {
+function shouldAbsorbDirectionInReferenceMode(medication, directionKey, mode, referenceConfig) {
+  if (mode !== "amrci") {
+    return false;
+  }
+
+  if (!referenceConfig.absorbedInstructionKeys?.includes(directionKey)) {
+    return false;
+  }
+
+  return Boolean((medication.frequencyEntries || []).length);
+}
+
+function scoreDirections(medication, mode, modeScore, tables, referenceConfig) {
   const result = [];
   uniqueStrings(medication.additionalDirectionKeys || []).forEach((directionKey) => {
+    if (shouldAbsorbDirectionInReferenceMode(medication, directionKey, mode, referenceConfig)) {
+      return;
+    }
+
     const direction = tables.instructions?.[directionKey];
     if (!direction) {
       addWarning(
@@ -335,7 +351,13 @@ function scoreMode(regimen, mode, config) {
       modeScore.sectionB += entry.weight;
     });
 
-    const scoredDirections = scoreDirections(medication, modeScore, tables);
+    const scoredDirections = scoreDirections(
+      medication,
+      mode,
+      modeScore,
+      tables,
+      referenceConfig
+    );
     scoredDirections.forEach((entry) => {
       medicationResult.sectionC += entry.weight;
       medicationResult.instructionItems.push(entry);
