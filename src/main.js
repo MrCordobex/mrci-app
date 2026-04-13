@@ -432,8 +432,8 @@ function buildResultsTableHtml(score) {
           <th>Forma/ruta</th>
           <th>Frecuencias puntuadas</th>
           <th>Instrucciones puntuadas</th>
-          <th>MRCI B+C</th>
-          <th>A-MRCI B+C</th>
+          <th>MRCI por medicamento (B+C)</th>
+          <th>A-MRCI por medicamento (B+C)</th>
           <th>Avisos</th>
         </tr>
       </thead>
@@ -478,14 +478,84 @@ function renderAudit() {
     .join("");
 }
 
-function renderFormsBreakdown(score) {
-  const items = score.mrci.formBreakdown.map(
-    (entry) => `<div class="bullet-item">${escapeHtml(entry.label)} (${formatNumber(entry.weight)})</div>`
-  );
+function buildSectionAUsageRows(score) {
+  const usage = new Map();
 
-  dom.formsBreakdown.innerHTML = items.length
-    ? items.join("")
-    : `<p class="muted">Sin formas/rutas registradas.</p>`;
+  (state.regimen.medications || []).forEach((medication, index) => {
+    const formKey = medication?.dosageFormKey || "__missing__";
+    const formLabel =
+      state.config.mrciTables.forms[medication?.dosageFormKey]?.label || "Sin forma/ruta reconocida";
+
+    if (!usage.has(formKey)) {
+      usage.set(formKey, {
+        key: formKey,
+        label: formLabel,
+        medicationNames: [],
+      });
+    }
+
+    usage.get(formKey).medicationNames.push(
+      medication?.name?.trim() || `Medicamento ${index + 1}`
+    );
+  });
+
+  return [...usage.values()];
+}
+
+function describeSectionAContribution(modeScore, formUsage, excludedFormKeys = []) {
+  if (formUsage.key === "__missing__") {
+    return "sin puntuacion: falta forma/ruta reconocible";
+  }
+
+  const counted = (modeScore.formBreakdown || []).find((entry) => entry.key === formUsage.key);
+  if (counted) {
+    return `contado 1 vez (+${formatNumber(counted.weight)})`;
+  }
+
+  if (excludedFormKeys.includes(formUsage.key)) {
+    return "no contado: forma excluida en esta plantilla";
+  }
+
+  return "no contado";
+}
+
+function renderFormsBreakdown(score) {
+  const formUsages = buildSectionAUsageRows(score);
+  if (!formUsages.length) {
+    dom.formsBreakdown.innerHTML = `<p class="muted">Sin formas/rutas registradas.</p>`;
+    return;
+  }
+
+  const excludedAmrciForms = state.config.amrciReference?.excludedFormKeys || [];
+  const summaryItems = [
+    `<div class="bullet-item"><strong>MRCI Seccion A:</strong> ${formatNumber(
+      score.mrci.sectionA
+    )} puntos mediante ${score.mrci.formBreakdown.length} suma(s) aplicada(s) sobre ${formUsages.length} forma(s)/ruta(s) unica(s) detectada(s).</div>`,
+    `<div class="bullet-item"><strong>A-MRCI Seccion A:</strong> ${formatNumber(
+      score.amrci.sectionA
+    )} puntos mediante ${score.amrci.formBreakdown.length} suma(s) aplicada(s) sobre ${formUsages.length} forma(s)/ruta(s) unica(s) detectada(s).</div>`,
+    `<div class="bullet-item"><strong>Regla:</strong> la Seccion A se suma por forma/ruta unica en el regimen, no una vez por cada medicamento.</div>`,
+  ];
+
+  const detailItems = formUsages.map((formUsage) => {
+    const medicationList = formUsage.medicationNames.map((name) => escapeHtml(name)).join(", ");
+    const repeatedNote =
+      formUsage.medicationNames.length > 1
+        ? ` Aunque esta forma aparece en ${formUsage.medicationNames.length} medicamentos, la Seccion A solo la suma una vez por regimen.`
+        : " Esta forma solo aparece una vez en el regimen.";
+
+    return `
+      <div class="bullet-item">
+        <strong>${escapeHtml(formUsage.label)}</strong>: presente en ${formUsage.medicationNames.length} medicamento(s) (${medicationList}).
+        MRCI: ${escapeHtml(describeSectionAContribution(score.mrci, formUsage))}.
+        A-MRCI: ${escapeHtml(
+          describeSectionAContribution(score.amrci, formUsage, excludedAmrciForms)
+        )}.${escapeHtml(repeatedNote)}
+      </div>
+    `;
+  });
+
+  dom.formsBreakdown.innerHTML = [...summaryItems, ...detailItems].join("");
 }
 
 function renderScoreboard(score) {
