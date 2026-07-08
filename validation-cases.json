@@ -151,7 +151,7 @@
       },
       "expected": {
         "mrci": { "sectionA": 3, "sectionB": 1, "sectionC": 1, "total": 5 },
-        "amrci": { "sectionA": 3, "sectionB": 1, "sectionC": 0, "total": 4 }
+        "amrci": { "sectionA": 3.5, "sectionB": 1, "sectionC": 0, "total": 4.5 }
       }
     },
     {
@@ -300,6 +300,66 @@
       "expected": {
         "mrci": { "sectionA": 1, "sectionB": 2, "sectionC": 1, "total": 4 },
         "amrci": { "sectionA": 1, "sectionB": 2, "sectionC": 0, "total": 3 }
+      }
+    },
+    {
+      "id": "C14",
+      "title": "Inyeccion generica en A-MRCI",
+      "purpose": "Comprobar que la ruta de inyeccion sin forma especifica usa el peso 3.5 de Scrivens Appendix B en A-MRCI.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "heparina",
+            "dosageFormKey": "injections_generic",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 inyeccion"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 4, "sectionB": 1, "sectionC": 0, "total": 5 },
+        "amrci": { "sectionA": 3.5, "sectionB": 1, "sectionC": 0, "total": 4.5 }
+      }
+    },
+    {
+      "id": "C15",
+      "title": "Inyectable ampolla/vial en A-MRCI",
+      "purpose": "Comprobar que ampolla/vial conserva MRCI 4 pero usa 3.5 en A-MRCI.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "furosemida ampolla",
+            "dosageFormKey": "ampules_vials",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 ampolla"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 4, "sectionB": 1, "sectionC": 0, "total": 5 },
+        "amrci": { "sectionA": 3.5, "sectionB": 1, "sectionC": 0, "total": 4.5 }
+      }
+    },
+    {
+      "id": "C16",
+      "title": "Inyectable precargado en A-MRCI",
+      "purpose": "Comprobar que precargado conserva MRCI 3 pero usa 3.5 en A-MRCI.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "enoxaparina precargada",
+            "dosageFormKey": "injections_prefilled",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": [],
+            "unitsPerDose": "1 jeringa"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 3, "sectionB": 1, "sectionC": 0, "total": 4 },
+        "amrci": { "sectionA": 3.5, "sectionB": 1, "sectionC": 0, "total": 4.5 }
       }
     }
   ],

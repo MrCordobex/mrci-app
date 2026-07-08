@@ -30,6 +30,16 @@ const STORAGE_KEYS = {
   audit: "mrci-studio-audit",
   parseInfo: "mrci-studio-parse-info",
 };
+const MANUAL_EXCLUDED_DOSAGE_FORM_KEYS = new Set([
+  "accuhalers",
+  "aerolizers",
+  "turbuhalers",
+  "injections_generic",
+]);
+
+const MANUAL_DOSAGE_FORM_OPTIONS = DOSAGE_FORM_OPTIONS.filter(
+  (entry) => !MANUAL_EXCLUDED_DOSAGE_FORM_KEYS.has(entry.key)
+);
 
 const dom = {
   statusBar: document.querySelector("#status-bar"),
@@ -56,7 +66,6 @@ const dom = {
   manualFrequency: document.querySelector("#manual-frequency"),
   manualCustomHours: document.querySelector("#manual-custom-hours"),
   manualCustomCount: document.querySelector("#manual-custom-count"),
-  manualFrequencyPrn: document.querySelector("#manual-frequency-prn"),
   addFrequencyBtn: document.querySelector("#add-frequency-btn"),
   manualFrequencyList: document.querySelector("#manual-frequency-list"),
   manualInstructionGrid: document.querySelector("#manual-instruction-grid"),
@@ -159,7 +168,7 @@ function buildOptionHtml(options, placeholder) {
 }
 
 function syncStaticControls() {
-  dom.manualForm.innerHTML = buildOptionHtml(DOSAGE_FORM_OPTIONS, "Seleccione una forma/ruta");
+  dom.manualForm.innerHTML = buildOptionHtml(MANUAL_DOSAGE_FORM_OPTIONS, "Seleccione una forma/ruta");
 
   const frequencyOptions = [
     ...FREQUENCY_OPTIONS.map((entry) => ({ key: entry.key, label: entry.label })),
@@ -202,7 +211,6 @@ function resetManualForm() {
   dom.manualFrequency.value = "";
   dom.manualCustomHours.value = "";
   dom.manualCustomCount.value = "";
-  dom.manualFrequencyPrn.checked = false;
   dom.manualNotes.value = "";
   state.manualFrequencyEntries = [];
   [...dom.manualInstructionGrid.querySelectorAll("input[type='checkbox']")].forEach((input) => {
@@ -249,9 +257,9 @@ function buildManualFrequencyEntry() {
     }
     return {
       code: "custom_interval",
-      label: `Cada ${hours} horas${dom.manualFrequencyPrn.checked ? " PRN" : ""}`,
+      label: `Cada ${hours} horas`,
       intervalHours: hours,
-      prn: dom.manualFrequencyPrn.checked,
+      prn: false,
     };
   }
 
@@ -262,9 +270,9 @@ function buildManualFrequencyEntry() {
     }
     return {
       code: "custom_daily_count",
-      label: `${count} veces al dia${dom.manualFrequencyPrn.checked ? " PRN" : ""}`,
+      label: `${count} veces al dia`,
       administrationsPerDay: count,
-      prn: dom.manualFrequencyPrn.checked,
+      prn: false,
     };
   }
 
@@ -841,7 +849,6 @@ function bindEvents() {
       dom.manualFrequency.value = "";
       dom.manualCustomHours.value = "";
       dom.manualCustomCount.value = "";
-      dom.manualFrequencyPrn.checked = false;
     } catch (error) {
       setStatus(error.message, "warning");
     }

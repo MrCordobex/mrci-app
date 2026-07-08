@@ -72,10 +72,11 @@ Archivo estructurado: [validation-cases.json](/C:/Users/pedro/Desktop/TFG-ANA/mr
 - `insulina glargina 20 UI noche`
 - Esperado:
 - `MRCI = 5`
-- `A-MRCI = 4`
+- `A-MRCI = 4.5`
 - Punto clave:
 - `20 UI` no debe convertir automaticamente el caso en `multiple_units_at_one_time`.
 - En la plantilla A-MRCI, `noche/bedtime` se absorbe dentro del mapeo de frecuencia y no suma una `Seccion C` aparte.
+- La forma inyectable precargada cuenta `3.5` en A-MRCI-A.
 
 ### C08 Triple inhalada tipo EPOC
 
@@ -138,6 +139,42 @@ Archivo estructurado: [validation-cases.json](/C:/Users/pedro/Desktop/TFG-ANA/mr
 - Punto clave:
 - En ambos indices, la `Seccion A` del regimen cuenta la forma oral una sola vez.
 - En la plantilla A-MRCI, `por la noche/at bedtime` no suma una `Seccion C` separada.
+
+### C14 Inyeccion generica en A-MRCI
+
+- Regimen: `heparina 1 inyeccion una vez al dia`
+- Esperado:
+- `MRCI = 5`
+- `A-MRCI = 4.5`
+- Desglose:
+- `MRCI A = 4`, `B = 1`, `C = 0`
+- `A-MRCI A = 3.5`, `B = 1`, `C = 0`
+- Punto clave:
+- En A-MRCI, una ruta de inyeccion generica sin distinguir precargado vs ampolla/vial usa el peso intermedio `3.5` de Scrivens Appendix B.
+
+### C15 Inyectable ampolla/vial en A-MRCI
+
+- Regimen: `furosemida ampolla 1 ampolla una vez al dia`
+- Esperado:
+- `MRCI = 5`
+- `A-MRCI = 4.5`
+- Desglose:
+- `MRCI A = 4`, `B = 1`, `C = 0`
+- `A-MRCI A = 3.5`, `B = 1`, `C = 0`
+- Punto clave:
+- En A-MRCI, cualquier inyectable seleccionado como ampolla/vial usa `3.5` en Seccion A.
+
+### C16 Inyectable precargado en A-MRCI
+
+- Regimen: `enoxaparina precargada 1 jeringa una vez al dia`
+- Esperado:
+- `MRCI = 4`
+- `A-MRCI = 4.5`
+- Desglose:
+- `MRCI A = 3`, `B = 1`, `C = 0`
+- `A-MRCI A = 3.5`, `B = 1`, `C = 0`
+- Punto clave:
+- En A-MRCI, cualquier inyectable seleccionado como precargado usa `3.5` en Seccion A.
 
 ## Regresion de literatura
 

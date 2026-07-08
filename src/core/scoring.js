@@ -213,6 +213,31 @@ function shouldAbsorbDirectionInReferenceMode(medication, directionKey, mode, re
   return Boolean((medication.frequencyEntries || []).length);
 }
 
+function resolveFormForMode(formKey, form, mode, referenceConfig) {
+  if (mode !== "amrci") {
+    return {
+      label: form.label,
+      weight: form.weight,
+      detail: "",
+    };
+  }
+
+  const override = referenceConfig.formWeightOverrides?.[formKey];
+  if (!override) {
+    return {
+      label: form.label,
+      weight: form.weight,
+      detail: "",
+    };
+  }
+
+  return {
+    label: override.label || form.label,
+    weight: maybeNumber(override.weight) ?? form.weight,
+    detail: override.detail || "",
+  };
+}
+
 function scoreDirections(medication, mode, modeScore, tables, referenceConfig) {
   const result = [];
   uniqueStrings(medication.additionalDirectionKeys || []).forEach((directionKey) => {
@@ -298,11 +323,13 @@ function scoreForms(regimen, mode, modeScore, tables, referenceConfig) {
     }
 
     seen.add(formKey);
-    modeScore.sectionA += form.weight;
+    const resolvedForm = resolveFormForMode(formKey, form, mode, referenceConfig);
+    modeScore.sectionA += resolvedForm.weight;
     modeScore.formBreakdown.push({
       key: formKey,
-      label: form.label,
-      weight: form.weight,
+      label: resolvedForm.label,
+      weight: resolvedForm.weight,
+      detail: resolvedForm.detail,
     });
   });
 }
