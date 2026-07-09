@@ -151,7 +151,7 @@
       },
       "expected": {
         "mrci": { "sectionA": 3, "sectionB": 1, "sectionC": 1, "total": 5 },
-        "amrci": { "sectionA": 3.5, "sectionB": 1, "sectionC": 0, "total": 4.5 }
+        "amrci": { "sectionA": 3, "sectionB": 1, "sectionC": 0, "total": 4 }
       }
     },
     {
@@ -304,8 +304,8 @@
     },
     {
       "id": "C14",
-      "title": "Inyeccion generica en A-MRCI",
-      "purpose": "Comprobar que la ruta de inyeccion sin forma especifica usa el peso 3.5 de Scrivens Appendix B en A-MRCI.",
+      "title": "Inyectable generico en A-MRCI",
+      "purpose": "Comprobar que la forma Inyectable sin subtipo usa MRCI 3 y el peso intermedio 3.5 en A-MRCI.",
       "regimen": {
         "medications": [
           {
@@ -318,14 +318,14 @@
         ]
       },
       "expected": {
-        "mrci": { "sectionA": 4, "sectionB": 1, "sectionC": 0, "total": 5 },
+        "mrci": { "sectionA": 3, "sectionB": 1, "sectionC": 0, "total": 4 },
         "amrci": { "sectionA": 3.5, "sectionB": 1, "sectionC": 0, "total": 4.5 }
       }
     },
     {
       "id": "C15",
       "title": "Inyectable ampolla/vial en A-MRCI",
-      "purpose": "Comprobar que ampolla/vial conserva MRCI 4 pero usa 3.5 en A-MRCI.",
+      "purpose": "Comprobar que ampolla/vial conserva MRCI 4 y A-MRCI 4.",
       "regimen": {
         "medications": [
           {
@@ -339,13 +339,13 @@
       },
       "expected": {
         "mrci": { "sectionA": 4, "sectionB": 1, "sectionC": 0, "total": 5 },
-        "amrci": { "sectionA": 3.5, "sectionB": 1, "sectionC": 0, "total": 4.5 }
+        "amrci": { "sectionA": 4, "sectionB": 1, "sectionC": 0, "total": 5 }
       }
     },
     {
       "id": "C16",
       "title": "Inyectable precargado en A-MRCI",
-      "purpose": "Comprobar que precargado conserva MRCI 3 pero usa 3.5 en A-MRCI.",
+      "purpose": "Comprobar que precargado conserva MRCI 3 y A-MRCI 3.",
       "regimen": {
         "medications": [
           {
@@ -359,7 +359,34 @@
       },
       "expected": {
         "mrci": { "sectionA": 3, "sectionB": 1, "sectionC": 0, "total": 4 },
-        "amrci": { "sectionA": 3.5, "sectionB": 1, "sectionC": 0, "total": 4.5 }
+        "amrci": { "sectionA": 3, "sectionB": 1, "sectionC": 0, "total": 4 }
+      }
+    },
+    {
+      "id": "C17",
+      "title": "Camara espaciadora y agujas solo A-MRCI",
+      "purpose": "Comprobar que Camara espaciadora y Agujas recetadas puntuan 3 cada una solo en A-MRCI y una vez por paciente.",
+      "regimen": {
+        "medications": [
+          {
+            "name": "salbutamol",
+            "dosageFormKey": "metered_dose_inhalers",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": ["spacer_once_per_patient", "prescribed_needles_once_per_patient"],
+            "unitsPerDose": "2 puff"
+          },
+          {
+            "name": "enoxaparina",
+            "dosageFormKey": "injections_prefilled",
+            "frequencyEntries": [{ "code": "once_daily", "label": "Una vez al dia" }],
+            "additionalDirectionKeys": ["spacer_once_per_patient", "prescribed_needles_once_per_patient"],
+            "unitsPerDose": "1 jeringa"
+          }
+        ]
+      },
+      "expected": {
+        "mrci": { "sectionA": 7, "sectionB": 2, "sectionC": 0, "total": 9 },
+        "amrci": { "sectionA": 7, "sectionB": 2, "sectionC": 6, "total": 15 }
       }
     }
   ],

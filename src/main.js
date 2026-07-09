@@ -34,7 +34,6 @@ const MANUAL_EXCLUDED_DOSAGE_FORM_KEYS = new Set([
   "accuhalers",
   "aerolizers",
   "turbuhalers",
-  "injections_generic",
 ]);
 
 const MANUAL_DOSAGE_FORM_OPTIONS = DOSAGE_FORM_OPTIONS.filter(

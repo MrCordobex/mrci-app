@@ -213,6 +213,22 @@ function shouldAbsorbDirectionInReferenceMode(medication, directionKey, mode, re
   return Boolean((medication.frequencyEntries || []).length);
 }
 
+function resolveDirectionForMode(direction, mode) {
+  if (mode === "mrci" && direction.mrciExcluded) {
+    return { excluded: true };
+  }
+
+  if (mode === "amrci" && direction.amrciExcluded) {
+    return { excluded: true };
+  }
+
+  const modeWeightKey = mode === "amrci" ? "amrciWeight" : "mrciWeight";
+  return {
+    label: direction.label,
+    weight: maybeNumber(direction[modeWeightKey]) ?? direction.weight,
+  };
+}
+
 function resolveFormForMode(formKey, form, mode, referenceConfig) {
   if (mode !== "amrci") {
     return {
@@ -238,7 +254,7 @@ function resolveFormForMode(formKey, form, mode, referenceConfig) {
   };
 }
 
-function scoreDirections(medication, mode, modeScore, tables, referenceConfig) {
+function scoreDirections(medication, mode, modeScore, tables, referenceConfig, directionContext) {
   const result = [];
   uniqueStrings(medication.additionalDirectionKeys || []).forEach((directionKey) => {
     if (shouldAbsorbDirectionInReferenceMode(medication, directionKey, mode, referenceConfig)) {
@@ -254,10 +270,23 @@ function scoreDirections(medication, mode, modeScore, tables, referenceConfig) {
       return;
     }
 
+    if (direction.oncePerRegimen && directionContext?.seenOncePerRegimen?.has(directionKey)) {
+      return;
+    }
+
+    const resolvedDirection = resolveDirectionForMode(direction, mode);
+    if (resolvedDirection.excluded) {
+      return;
+    }
+
+    if (direction.oncePerRegimen) {
+      directionContext?.seenOncePerRegimen?.add(directionKey);
+    }
+
     result.push({
       key: directionKey,
-      label: direction.label,
-      weight: direction.weight,
+      label: resolvedDirection.label,
+      weight: resolvedDirection.weight,
     });
   });
 
@@ -338,6 +367,9 @@ function scoreMode(regimen, mode, config) {
   const modeScore = createEmptyModeScore(mode);
   const tables = resolveTables(config);
   const referenceConfig = buildReferenceConfig(config);
+  const directionContext = {
+    seenOncePerRegimen: new Set(),
+  };
 
   scoreForms(regimen, mode, modeScore, tables, referenceConfig);
 
@@ -383,7 +415,8 @@ function scoreMode(regimen, mode, config) {
       mode,
       modeScore,
       tables,
-      referenceConfig
+      referenceConfig,
+      directionContext
     );
     scoredDirections.forEach((entry) => {
       medicationResult.sectionC += entry.weight;
